@@ -90,6 +90,66 @@ class MenuItem extends Model
 ```
 
 
+
+## Migratii:
+```
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('nume');
+            $table->text('descriere')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('categories');
+    }
+};
+```
+
+```
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('menu_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->string('nume');
+            $table->text('descriere')->nullable();
+            $table->decimal('pret', 10, 2);
+            $table->boolean('disponibil')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('menu_items');
+    }
+};
+```
+
+
+
+
 ## Validarea datelor:
 #### CategoryRequest:
 ```
@@ -259,6 +319,28 @@ class MenuItemRequest extends FormRequest
     </div>
 @endsection
 ```
+
+## Rute Cod:
+```
+<?php
+
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MenuItemController;
+use Illuminate\Support\Facades\Route;
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::resource('categories', CategoryController::class);
+Route::resource('menu-items', MenuItemController::class);
+```
+
+## Aplicatie:
+![image](https://github.com/user-attachments/assets/7cdb9334-cb84-4c70-9185-d782f4efa89a)
+
+![image](https://github.com/user-attachments/assets/e1190ffc-02fb-4890-a038-06425a89aacc)
 
 
 
